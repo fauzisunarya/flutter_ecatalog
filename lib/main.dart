@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_ecatalog/bloc/bloc/register_bloc.dart';
+import 'package:flutter_ecatalog/data/datasource/atuh_datasource.dart';
 import 'package:flutter_ecatalog/presentation/register_page.dart';
 
 void main() {
@@ -10,12 +13,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return BlocProvider(
+      create: (context) => RegisterBloc(AuthDataSource()),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const RegisterPage(),
       ),
-      home: const RegisterPage(),
     );
   }
 }

@@ -5,5 +5,5 @@ abstract class RegisterEvent {}
 class DoRegisterEvent extends RegisterEvent {
   final RegisterRequestModel model;
 
-  DoRegisterEvent(this.model);
+  DoRegisterEvent({required this.model});
 }
