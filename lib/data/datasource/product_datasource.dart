@@ -25,13 +25,34 @@ class ProductDataSource {
     }
   }
 
+  Future<Either<String, List<ProductResponseModel>>> getPaginationProduct(
+      {required int offset, required int limit}) async {
+    final response = await http.get(
+      Uri.parse(
+          'https://api.escuelajs.co/api/v1/products/?offset=${offset}&limit=${limit}'),
+    );
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      return Right(
+        List<ProductResponseModel>.from(
+          jsonDecode(response.body).map(
+            (x) => ProductResponseModel.fromMap(x),
+          ),
+        ),
+      );
+    } else {
+      return Left('get product error');
+    }
+  }
+
   Future<Either<String, ProductResponseModel>> createProduct(
       ProductRequestModel model) async {
     final response = await http.post(
         Uri.parse('https://api.escuelajs.co/api/v1/products/'),
         body: model.toJson(),
         headers: {'Content-Type': 'application/json'});
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return Right(ProductResponseModel.fromJson(response.body));
     } else {
       return left('Error add product');

@@ -16,7 +16,7 @@ class ProductRequestModel {
     required this.title,
     required this.price,
     required this.description,
-    this.categoryId = 1,
+    this.categoryId = 17,
     this.images = const ['https://placeimg.com/640/480/any'],
   });
 

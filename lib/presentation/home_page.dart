@@ -18,6 +18,8 @@ class _HomePageState extends State<HomePage> {
   TextEditingController? priceController;
   TextEditingController? descriptionController;
 
+  final scrollController = ScrollController();
+
   @override
   void initState() {
     titleController = TextEditingController();
@@ -25,6 +27,12 @@ class _HomePageState extends State<HomePage> {
     descriptionController = TextEditingController();
     super.initState();
     context.read<ProductBloc>().add(GetProductEvent());
+    scrollController.addListener(() {
+      if (scrollController.position.maxScrollExtent ==
+          scrollController.offset) {
+        context.read<ProductBloc>().add(NextProductEvent());
+      }
+    });
   }
 
   @override
@@ -63,19 +71,31 @@ class _HomePageState extends State<HomePage> {
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
           if (state is ProductLoaded) {
+            debugPrint('totalData : ${state.data.length}');
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView.builder(
+                controller: scrollController,
                 itemBuilder: (context, index) {
+                  if (state.isNext && index == state.data.length) {
+                    return const Card(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
                   return Card(
                     child: ListTile(
                       title: Text(
                           state.data.reversed.toList()[index].title ?? '-'),
-                      subtitle: Text('${state.data[index].price}\$'),
+                      // subtitle: Text('${state.data[index].price}\$'),
+                      subtitle: Text(
+                          '${state.data.reversed.toList()[index].price.toString()}\$'),
                     ),
                   );
                 },
-                itemCount: state.data.length,
+                itemCount:
+                    state.isNext ? state.data.length + 1 : state.data.length,
               ),
             );
           }
@@ -128,13 +148,12 @@ class _HomePageState extends State<HomePage> {
                             content: Text('Add Product Success'),
                           ),
                         );
+                        context.read<ProductBloc>().add(GetProductEvent());
+                        titleController!.clear();
+                        priceController!.clear();
+                        descriptionController!.clear();
+                        Navigator.pop(context);
                       }
-
-                      context.read<ProductBloc>().add(GetProductEvent());
-                      titleController!.clear();
-                      priceController!.clear();
-                      descriptionController!.clear();
-                      Navigator.pop(context);
 
                       if (state is AddProductError) {
                         ScaffoldMessenger.of(context).showSnackBar(

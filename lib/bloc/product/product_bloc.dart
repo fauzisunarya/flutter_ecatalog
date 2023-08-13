@@ -15,15 +15,32 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ) : super(ProductInitial()) {
     on<GetProductEvent>((event, emit) async {
       emit(ProductLoading());
-      final result = await dataSource.getAllProduct();
+      final result =
+          await dataSource.getPaginationProduct(offset: 0, limit: 10);
       result.fold(
-        (l) => emit(
-          ProductError(message: l),
-        ),
-        (r) => emit(
-          ProductLoaded(data: r),
-        ),
-      );
+          (l) => emit(
+                ProductError(message: l),
+              ), (r) {
+        bool isNext = result.length() == 10;
+        emit(
+          ProductLoaded(data: r, isNext: isNext),
+        );
+      });
+    });
+    on<NextProductEvent>((event, emit) async {
+      final currentState = state as ProductLoaded;
+      final result = await dataSource.getPaginationProduct(
+          offset: currentState.offset + 10, limit: 10);
+      result.fold(
+          (l) => emit(
+                ProductError(message: l),
+              ), (r) {
+        bool isNext = result.length() == 10;
+        emit(ProductLoaded(
+            data: [...currentState.data, ...r],
+            offset: currentState.offset + 10,
+            isNext: isNext));
+      });
     });
   }
 }
