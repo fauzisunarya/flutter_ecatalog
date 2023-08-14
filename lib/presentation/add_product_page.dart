@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecatalog/bloc/cubit_update_product/update_product_cubit.dart';
 import 'package:flutter_ecatalog/data/models/request/product_request_model.dart';
+import 'package:flutter_ecatalog/presentation/camera_page.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({Key? key}) : super(key: key);
@@ -40,26 +42,26 @@ class _AddProductPageState extends State<AddProductPage> {
     super.initState();
   }
 
-  // Future<void> getImage(ImageSource source) async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? photo = await picker.pickImage(
-  //     source: source,
-  //     imageQuality: 50,
-  //   );
+  Future<void> getImage(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? photo = await picker.pickImage(
+      source: source,
+      imageQuality: 50,
+    );
 
-  //   if (photo != null) {
-  //     picture = photo;
-  //     setState(() {});
-  //   }
-  // }
+    if (photo != null) {
+      picture = photo;
+      setState(() {});
+    }
+  }
 
-  // Future<void> getMultipleImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final List<XFile> photo = await picker.pickMultiImage();
+  Future<void> getMultipleImage() async {
+    final ImagePicker picker = ImagePicker();
+    final List<XFile> photo = await picker.pickMultiImage();
 
-  //   multiplePicture = photo;
-  //   setState(() {});
-  // }
+    multiplePicture = photo;
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,22 +87,22 @@ class _AddProductPageState extends State<AddProductPage> {
             const SizedBox(
               height: 8,
             ),
-            // multiplePicture != null
-            Row(
-              children: [
-                // ...multiplePicture!
-                // .map((e) =>
-                SizedBox(
-                    height: 120,
-                    width: 120,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      // child: Image.file(File(e.path)),
-                    ))
-                // .toList()
-              ],
-            ),
-            SizedBox(),
+            multiplePicture != null
+                ? Row(
+                    children: [
+                      ...multiplePicture!
+                          .map((e) => SizedBox(
+                              height: 120,
+                              width: 120,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Image.file(File(e.path)),
+                              )))
+                          .toList()
+                    ],
+                  )
+                : SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -116,7 +118,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       //         cameras: value,
                       //       );
                       //     })));
-                      // getImage(ImageSource.camera);
+                      getImage(ImageSource.camera);
                     },
                     child: const Text('Camera')),
                 const SizedBox(
@@ -127,7 +129,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   //     // backgroundColor: context.theme.appColors.primary,
                   //     ),
                   onPressed: () {
-                    // getImage(ImageSource.gallery);
+                    getImage(ImageSource.gallery);
                     // getMultipleImage();
                   },
                   child: const Text(
@@ -162,7 +164,6 @@ class _AddProductPageState extends State<AddProductPage> {
                     loaded: (model) {
                       Navigator.pop(context);
                     });
-                // TODO: implement listener
               },
               child: BlocBuilder<UpdateProductCubit, UpdateProductCubitState>(
                 builder: (context, state) {
@@ -189,46 +190,6 @@ class _AddProductPageState extends State<AddProductPage> {
                 },
               ),
             ),
-            // BlocListener<ProductUpdateCubit, ProductUpdateState>(
-            //   listener: (context, state) {
-            //     state.maybeWhen(
-            //       orElse: () {},
-            //       loaded: (model) {
-            //         debugPrint(model.toString());
-            //         Navigator.pop(context);
-            //       },
-            //     );
-            //   },
-            //   child: BlocBuilder<ProductUpdateCubit, ProductUpdateState>(
-            //     builder: (context, state) {
-            //       return state.maybeWhen(
-            //         orElse: () {
-            //           return ElevatedButton(
-            //             onPressed: () {
-            //               final model = ProductRequestModel(
-            //                   title: titleController!.text,
-            //                   price: int.parse(priceController!.text),
-            //                   description: descriptionController!.text);
-            //               context.read<ProductUpdateCubit>().addProduct(
-            //                     model,
-            //                     picture!,
-            //                   );
-            //             },
-            //             style: ElevatedButton.styleFrom(
-            //               backgroundColor: context.theme.appColors.primary,
-            //             ),
-            //             child: const Text('Submit'),
-            //           );
-            //         },
-            //         loading: () {
-            //           return const Center(
-            //             child: CircularProgressIndicator(),
-            //           );
-            //         },
-            //       );
-            //     },
-            //   ),
-            // )
           ],
         ),
       ),
