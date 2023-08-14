@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_ecatalog/bloc/add_product/add_product_bloc.dart';
+import 'package:flutter_ecatalog/bloc/cubit_update_product/update_product_cubit.dart';
 import 'package:flutter_ecatalog/bloc/login/login_bloc.dart';
 import 'package:flutter_ecatalog/bloc/product/product_bloc.dart';
 import 'package:flutter_ecatalog/bloc/register/register_bloc.dart';
+import 'package:flutter_ecatalog/bloc/update_product/update_product_bloc.dart';
 import 'package:flutter_ecatalog/data/datasource/atuh_datasource.dart';
 import 'package:flutter_ecatalog/data/datasource/product_datasource.dart';
 import 'package:flutter_ecatalog/presentation/login_page.dart';
@@ -31,6 +33,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AddProductBloc(ProductDataSource()),
+        ),
+        BlocProvider(
+          create: (context) => UpdateProductBloc(ProductDataSource()),
+        ),
+        BlocProvider(
+          create: (context) => UpdateProductCubit(ProductDataSource()),
         ),
       ],
       child: MaterialApp(
